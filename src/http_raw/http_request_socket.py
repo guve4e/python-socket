@@ -2,8 +2,8 @@
 from src.http_raw.a_http_request import AHttpRequest
 from urllib.parse import urlparse
 from src.http_raw.response import HttpResponse
-from src.soket.stateless_socket import StatelessSocket
-
+from src.soket.stateless_socket import SocketCommunication
+from src.soket.soket import Socket
 
 class HttpRequestSocket(AHttpRequest):
 
@@ -67,7 +67,17 @@ class HttpRequestSocket(AHttpRequest):
         self.url['query'] = url.query
 
     def __retrieve_body(self):
-        raw = self.response_str.split("")
+        raw = self.response_str.split(b"\r\n\r\n")
+        if len(raw) > 2:
+            raise Exception("Wrong response String!")
+
+        body_bytes = raw[1]
+        body_str = body_bytes.decode("utf-8")
+
+        if body_str.endswith('\n'):
+            pass
+
+        return body_str
 
     def set_url(self, url: str) -> None:
         self.__parse_url(url)
@@ -111,7 +121,7 @@ class HttpRequestSocket(AHttpRequest):
 
         sock = None
         try:
-            sock = StatelessSocket(self.url['host'], 80)
+            sock = SocketCommunication(Socket(),self.url['host'], 80)
             sock.send(self.request_str)
             rev = sock.get_response_raw()
             self.response_str = rev
@@ -133,7 +143,7 @@ class HttpRequestSocket(AHttpRequest):
         Return HttpResponse Object
         :return:
         """
-        response = HttpResponse(self.response_str.decode('UTF-8'))
+        response = HttpResponse(self.response_str)
         return response
 
 

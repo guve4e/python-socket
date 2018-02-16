@@ -1,5 +1,5 @@
 from unittest import TestCase
-from src.soket.stateless_socket import StatelessSocket
+from src.soket.stateless_socket import SocketCommunication
 
 class TestSocket(TestCase):
     def test___init__(self):
@@ -11,7 +11,7 @@ class TestSocket(TestCase):
 
         sock = None
         try:
-            sock = StatelessSocket("local",9733)
+            sock = SocketCommunication("local", 9733)
             sock.send(request)
             rev = sock.get_response_raw()
 

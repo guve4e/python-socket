@@ -20,8 +20,8 @@ class TestHttpResponse(TestCase):
                         "key": "value" }"""
 
     try:
-        httprequest = HttpResponse(response_str)
+        httprequest = HttpResponse(response_str.encode())
     except Exception as e:
         print(e)
 
-    print(httprequest)
+    print(httprequest.decode("uft8"))
